@@ -1,0 +1,93 @@
+#include <stdio.h>
+#include <cs50.h>
+#include <string.h>
+#include <ctype.h>
+#include <math.h>
+
+int count_letters(string text);
+int count_words(string text);
+int count_sentences(string text);
+int calculate_grade(int letter_count, int word_count, int sentence_count);
+
+int main(void)
+{
+    //Get user input
+    string text = get_string("Text: ");
+
+    //Get the various counts
+    int letter_count = count_letters(text);
+    int word_count = count_words(text);
+    int sentence_count = count_sentences(text);
+
+    //Run the calculation
+    int grade_level = calculate_grade(letter_count, word_count, sentence_count);
+
+    //Print the results
+    if (grade_level > 16)
+    {
+        printf("Grade 16+\n");
+    }
+    else if (grade_level < 1)
+    {
+        printf("Before Grade 1\n");
+    }
+    else
+    {
+        printf("Grade %i\n", grade_level);
+    }
+
+}
+
+int count_letters(string text)
+{
+    int count = 0;
+    for (int i = 0; i < strlen(text); i++)
+    {
+        if (isalnum(text[i]))
+        {
+            count++;
+        }
+    }
+    return count;
+}
+
+int count_words(string text)
+{
+    //This function is essentially counting the number of white space characters (tabs or single) and incrementing the count. Starts at 1 because there is 1 more word compared to spaces.
+    int count = 1;
+    for (int i = 0; i < strlen(text); i++)
+    {
+        if (isblank(text[i]))
+        {
+            count++;
+        }
+    }
+    return count;
+}
+
+int count_sentences(string text)
+{
+    //This function retrieves the number of sentences by counting the following chars, '!', '?' and '.'
+    int count = 0;
+    for (int i = 0; i < strlen(text); i++)
+    {
+        if (text[i] == '!' || text[i] == '?' || text[i] == '.')
+        {
+            count++;
+        }
+    }
+    return count;
+}
+
+int calculate_grade(int letter_count, int word_count, int sentence_count)
+{
+    //Find our averages.
+    float L = ((100 * (float)letter_count) / (float)word_count);
+    float S = (float)sentence_count / (float)word_count * 100;
+    
+    //Plug our averages into the equation
+    int grade_level = round((0.0588 * L) - (0.296 * S) - 15.8);
+
+    return grade_level;
+
+}
